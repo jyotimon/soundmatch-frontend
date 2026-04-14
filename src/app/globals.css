@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card        { @apply bg-zinc-900 border border-zinc-800 rounded-2xl; }
+  .card-hover  { @apply hover:border-zinc-600 transition-colors duration-150; }
+  .btn-spotify { @apply flex items-center gap-2 bg-[#1DB954] hover:bg-[#1aa34a] active:scale-95 text-black font-semibold px-6 py-3 rounded-full transition-all duration-150 cursor-pointer; }
+  .btn-primary { @apply bg-zinc-100 hover:bg-white active:scale-95 text-zinc-900 font-semibold px-5 py-2.5 rounded-full transition-all duration-150 cursor-pointer; }
+  .btn-ghost   { @apply border border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800 px-5 py-2.5 rounded-full transition-all duration-150 cursor-pointer; }
+  .genre-tag   { @apply px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs font-medium; }
+  .nav-link    { @apply text-zinc-400 hover:text-zinc-100 transition-colors text-sm font-medium; }
+  .score-bar   { @apply h-1.5 rounded-full bg-zinc-800 overflow-hidden; }
+}
