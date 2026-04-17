@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,19 +10,25 @@ function Callback() {
   const { setToken } = useAuth();
 
   useEffect(() => {
-    // const token = params.get('token');
-    // const error = params.get('error');
     const token = new URLSearchParams(window.location.search).get('token');
     const error = new URLSearchParams(window.location.search).get('error');
 
+    if (error) {
+      console.error('Auth error:', error);
+      router.push(`/?error=${error}`);
+      return;
+    }
 
-    if (error) { router.push(`/?error=${error}`); return; }
     if (token) {
-       localStorage.setItem("sm_token", token);
-       setToken(token);
-       router.push('/dashboard'); 
-      }
-    else         router.push('/');
+      console.log('Token received, storing and redirecting to dashboard...');
+      localStorage.setItem("sm_token", token);
+      setToken(token);
+      // Redirect immediately, don't wait for setToken to complete
+      router.push('/dashboard');
+    } else {
+      console.warn('No token or error in callback URL');
+      router.push('/');
+    }
   }, [params, router, setToken]);
 
   return (
@@ -40,3 +46,33 @@ export default function AuthCallbackPage() {
     </Suspense>
   );
 }
+
+
+
+
+// ❌ BEFORE
+// if (error) { router.push(`/?error=${error}`); return; }
+// if (token) {
+//    localStorage.setItem("sm_token", token);
+//    setToken(token);
+//    router.push('/dashboard'); 
+//   }
+// else         router.push('/');
+
+// // ✅ AFTER
+// if (error) {
+//   console.error('Auth error:', error);           // ← Added logging
+//   router.push(`/?error=${error}`);
+//   return;                                         // ← Explicit return
+// }
+
+// if (token) {
+//   console.log('Token received, storing and redirecting to dashboard...');  // ← Added logging
+//   localStorage.setItem("sm_token", token);
+//   setToken(token);
+//   // Redirect immediately, don't wait for setToken to complete         // ← Added helpful comment
+//   router.push('/dashboard');
+// } else {
+//   console.warn('No token or error in callback URL');                  // ← Added logging
+//   router.push('/');
+// }
