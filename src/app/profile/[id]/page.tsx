@@ -25,16 +25,21 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
   }, [auth, loading, params.id, router]);
 
   const handleConnect = async () => {
-    setConnecting(true);
-    try {
-      await requestMatch(params.id);
-      setConnected(true);
-    } catch (err: any) {
-      if (err.response?.status === 409) setConnected(true);
-    } finally {
-      setConnecting(false);
+  setConnecting(true);
+  try {
+    await requestMatch(params.id);
+    setConnected(true);
+    alert('Connection request sent to ' + user.display_name + '!');
+  } catch (err: any) {
+    if (err.response?.status === 409) {
+      setConnected(true); // already matched
+    } else {
+      alert('Failed to send request. Try again.');
     }
-  };
+  } finally {
+    setConnecting(false);
+  }
+};
 
   if (fetching) {
     return (
