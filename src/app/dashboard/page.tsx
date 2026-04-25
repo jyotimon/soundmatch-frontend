@@ -27,10 +27,32 @@ export default function DashboardPage() {
   }, [auth, loading, router]);
 
   // 3. Fetch profile effect
-  useEffect(() => {
-    if (!auth) return;
-    getMyProfile().then(setProfile).catch(() => null);
-  }, [auth]);
+ useEffect(() => {
+  if (!auth) return;
+
+  getMyProfile()
+    .then(async data => {
+      if (data) {
+        setProfile(data);
+      } else {
+        // Profile exists in DB but is empty — auto-sync
+        try {
+          await syncProfile();
+          setSyncMsg('Building your profile… refresh in 30 seconds.');
+        } catch {
+          setSyncMsg('Click ↻ Sync Spotify to build your profile.');
+        }
+      }
+    })
+    .catch(async () => {
+      try {
+        await syncProfile();
+        setSyncMsg('Building your profile… refresh in 30 seconds.');
+      } catch {
+        setSyncMsg('Click ↻ Sync Spotify to build your profile.');
+      }
+    });
+}, [auth]);
 
   // 4. Fetch persona effect — AFTER profile is declared
   useEffect(() => {
