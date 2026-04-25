@@ -43,12 +43,6 @@ export default function DashboardPage() {
 
 
 // In the JSX, below the audio profile card:
-{persona && (
-  <div className="card p-6 mb-5 border-zinc-700">
-    <p className="text-xs text-zinc-500 mb-2 uppercase tracking-widest">Your music soul</p>
-    <p className="text-zinc-200 leading-relaxed italic">"{persona}"</p>
-  </div>
-)}
 
 {persona && (
   <div className="card p-6 mb-5">
