@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { StatCard, GenreTags, ArtistRow, TrackRow, PersonalityBadge, AudioBars, Skeleton } from '@/components/ui';
 import { useAuth } from '@/hooks/useAuth';
-import { syncProfile, getMyProfile } from '@/lib/api';
+import { syncProfile, getMyProfile, api } from '@/lib/api';
+
 
 export default function DashboardPage() {
   const { auth, loading } = useAuth();
@@ -17,21 +18,48 @@ export default function DashboardPage() {
   const [profileData, setProfileData] = useState<any>(null);
   const [syncing, setSyncing]         = useState(false);
   const [syncMsg, setSyncMsg]         = useState('');
+  const [persona,   setPersona]   = useState('');
+  const [profile, setProfile] = useState<any>(null);
 
-  // Redirect to home if not logged in
+   // 2. Redirect effect
   useEffect(() => {
     if (!loading && !auth) router.push('/');
   }, [auth, loading, router]);
 
-  // Fetch the music profile separately (it may not be ready yet on first login)
+  // 3. Fetch profile effect
   useEffect(() => {
     if (!auth) return;
-    getMyProfile()
-      .then(setProfileData)
-      .catch(() => {
-        // Profile not synced yet — that's fine, the UI handles the empty state
-      });
+    getMyProfile().then(setProfile).catch(() => null);
   }, [auth]);
+
+  // 4. Fetch persona effect — AFTER profile is declared
+  useEffect(() => {
+    if (!profile) return;
+    api.get('/api/users/me/persona')
+      .then(r => setPersona(r.data.data.description))
+      .catch(() => null);
+  }, [profile]);  // ← runs when profile changes
+
+
+
+// In the JSX, below the audio profile card:
+{persona && (
+  <div className="card p-6 mb-5 border-zinc-700">
+    <p className="text-xs text-zinc-500 mb-2 uppercase tracking-widest">Your music soul</p>
+    <p className="text-zinc-200 leading-relaxed italic">"{persona}"</p>
+  </div>
+)}
+
+{persona && (
+  <div className="card p-6 mb-5">
+    <p className="text-xs text-zinc-500 mb-3 uppercase tracking-widest font-medium">
+      Your music soul
+    </p>
+    <p className="text-zinc-200 leading-relaxed italic text-sm">
+      "{persona}"
+    </p>
+  </div>
+)}
 
   // Show skeletons while auth is being checked
   if (loading || !auth) {
