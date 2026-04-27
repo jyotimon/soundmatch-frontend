@@ -31,26 +31,18 @@ export default function DashboardPage() {
   if (!auth) return;
 
   getMyProfile()
-    .then(async data => {
+    .then(data => {
       if (data) {
-        setProfile(data);
+        setProfile(data);  // profile exists — just show it, no sync
       } else {
-        // Profile exists in DB but is empty — auto-sync
-        try {
-          await syncProfile();
-          setSyncMsg('Building your profile… refresh in 30 seconds.');
-        } catch {
-          setSyncMsg('Click ↻ Sync Spotify to build your profile.');
-        }
+        // Truly first time — auto sync
+        syncProfile()
+          .then(() => setSyncMsg('Building your profile… refresh in 30 seconds.'))
+          .catch(() => setSyncMsg('Click ↻ Sync Spotify to build your profile.'));
       }
     })
-    .catch(async () => {
-      try {
-        await syncProfile();
-        setSyncMsg('Building your profile… refresh in 30 seconds.');
-      } catch {
-        setSyncMsg('Click ↻ Sync Spotify to build your profile.');
-      }
+    .catch(() => {
+      setSyncMsg('Click ↻ Sync Spotify to build your profile.');
     });
 }, [auth]);
 
