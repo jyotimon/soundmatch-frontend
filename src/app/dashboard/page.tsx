@@ -58,16 +58,6 @@ export default function DashboardPage() {
 
 // In the JSX, below the audio profile card:
 
-{persona && (
-  <div className="card p-6 mb-5">
-    <p className="text-xs text-zinc-500 mb-3 uppercase tracking-widest font-medium">
-      Your music soul
-    </p>
-    <p className="text-zinc-200 leading-relaxed italic text-sm">
-      "{persona}"
-    </p>
-  </div>
-)}
 
   // Show skeletons while auth is being checked
   if (loading || !auth) {
@@ -201,6 +191,20 @@ export default function DashboardPage() {
                 <AudioBars features={af} />
               </div>
             )}
+
+            {/* ADD HERE — inside the return, after audio profile */}
+            {persona && (
+              <div className="card p-6 mb-5">
+                <p className="text-xs text-zinc-500 mb-3 uppercase tracking-widest font-medium">
+                  Your music soul
+                </p>
+                <p className="text-zinc-200 leading-relaxed italic text-sm">
+                  "{persona}"
+                </p>
+              </div>
+            )}
+
+
 
             {/* Artists + Tracks */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
